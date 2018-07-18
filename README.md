@@ -8,11 +8,12 @@ This is a preliminary experiment.
 ```console
 $ git clone git@github.com:hfu/refuel.git
 $ cd refuel
+$ npm install
 ```
 
 ## Usage
 ```console
-$ node index.js rdcl | node hst2mbtiles.js rdcl.mbtiles
+$ npm refuel 
 ```
 
 ## See also
