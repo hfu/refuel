@@ -12,7 +12,7 @@ $ cd refuel
 
 ## Usage
 ```console
-$ node index.js experimental_landformclassification1 | node hst2mbtiles.js
+$ node index.js rdcl | node hst2mbtiles.js rdcl.mbtiles
 ```
 
 ## See also
