@@ -14,6 +14,7 @@ if (process.argv.length !== 3) {
   process.exit()
 }
 const t = process.argv[2]
+let count = 0
 
 const refuel = (t, z, x, y, ttl) => {
   fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/${z}/${x}/${y}.geojson`)
@@ -36,11 +37,12 @@ const refuel = (t, z, x, y, ttl) => {
         buffer: zlib.gzipSync(vtpbf.fromGeojsonVt(o, {version: 1})) ////
           .toString('base64')
       }))
+      count++
     })
     .catch(err => {
-      console.error(err)
+      // console.error(err)
       ttl--
-      console.error(`retrying ttl=${ttl} ${t}/${z}/${z}/${y}`)
+      console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${z}/${y}`)
       refuel(t, z, x, y, ttl)
     })
 }
