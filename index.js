@@ -20,7 +20,9 @@ const refuel = (t, z, x, y, ttl) => {
   fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/${z}/${x}/${y}.geojson`)
     .then(res => res.json())
     .then(json => {
+      // console.log(JSON.stringify(json))
       let o = stratify(json)
+      // console.log(JSON.stringify(o))
       for (let i in o) {
         o[i] = geojsonvt(o[i], {maxZoom: 18}).getTile(z, x, y)
       }
