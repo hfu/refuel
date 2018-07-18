@@ -4,10 +4,6 @@ const zlib = require('zlib')
 const vtpbf = require('vt-pbf')
 const geojsonvt = require('geojson-vt')
 
-// for debug
-const VectorTile = require('@mapbox/vector-tile').VectorTile
-const Pbf = require('pbf')
-
 if (process.argv.length !== 3) {
   console.log('usage: node index.js nrpt | node hst2mbtiles.js nrpt.mbtiles')
   process.exit()
@@ -39,7 +35,7 @@ const refuel = (t, z, x, y, ttl) => {
     .catch(err => {
       // console.error(err)
       ttl--
-      console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${z}/${y}`)
+      console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${x}/${y}`)
       refuel(t, z, x, y, ttl)
     })
 }

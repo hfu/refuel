@@ -4,7 +4,7 @@
   "description": "Create mbtiles of vector tiles from GeoJSON tiles online, using mokuroku.csv.gz",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js nrpt | node hst2mbtiles.js nrpt.mbtiles"
+    "test": "node batch.js | sh"
   },
   "repository": {
     "type": "git",
