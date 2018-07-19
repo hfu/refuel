@@ -13,7 +13,7 @@ $ npm install
 
 ## Usage
 ```console
-$ npm refuel 
+$ npm run refuel 
 $ tile-join -o experimental.mbtiles *.mbtiles
 ```
 You need to have [tippecanoe](https://github.com/mapbox/tippecanoe) installed to run tile-join.
