@@ -29,7 +29,10 @@ const refuel = (t, z, x, y, ttl, s) => {
       let o = stratify(json)
       // console.log(JSON.stringify(o))
       for (let i in o) {
-        o[i] = geojsonvt(o[i], {maxZoom: 18}).getTile(z, x, y)
+        o[i] = geojsonvt(
+	  o[i], 
+	  {maxZoom: 18, buffer: 64}
+	).getTile(z, x, y)
       }
       // if (!o[t]) return
       console.log(JSON.stringify({
