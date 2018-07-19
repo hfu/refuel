@@ -3,6 +3,7 @@ const fetch = require('node-fetch')
 const zlib = require('zlib')
 const vtpbf = require('vt-pbf')
 const geojsonvt = require('geojson-vt')
+const moment = require('moment')
 
 if (process.argv.length !== 3) {
   console.log('usage: node index.js nrpt | node hst2mbtiles.js nrpt.mbtiles')
@@ -11,6 +12,10 @@ if (process.argv.length !== 3) {
 const t = process.argv[2]
 const stratify = require(`./stratify/${t}.js`)
 let count = 0
+
+const show = (t, z, x, y) => {
+  console.error(`${moment().format()}\t#${count}\t${t}/${z}/${x}/${y}`)
+}
 
 const refuel = (t, z, x, y, ttl) => {
   fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/${z}/${x}/${y}.geojson`)
@@ -31,6 +36,7 @@ const refuel = (t, z, x, y, ttl) => {
           .toString('base64')
       }))
       count++
+      if (count % 10000 === 0) show(t, z, x, y)
     })
     .catch(err => {
       // console.error(err)
