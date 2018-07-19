@@ -35,6 +35,7 @@ const refuel = (t, z, x, y, ttl) => {
     .catch(err => {
       // console.error(err)
       ttl--
+      if (ttl == -1) return
       console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${x}/${y}`)
       refuel(t, z, x, y, ttl)
     })
@@ -48,6 +49,6 @@ fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/mokuroku.csv.gz`)
       if (zxy.length !== 3) return
       const [z, x, y] = zxy
       if (isNaN(z)) return
-      refuel(t, z, x, y, 10)
+      refuel(t, z, x, y, 20)
     })
   })
