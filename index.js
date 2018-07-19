@@ -12,12 +12,16 @@ if (process.argv.length !== 3) {
 const t = process.argv[2]
 const stratify = require(`./stratify/${t}.js`)
 let count = 0
+let para = 0
+const PARAMAX = 15
 
 const show = (t, z, x, y) => {
-  console.error(`${moment().format()}\t#${count}\t${t}/${z}/${x}/${y}`)
+  console.error(`${moment().format()}\t#${count}(${para})\t${t}/${z}/${x}/${y}`)
 }
 
-const refuel = (t, z, x, y, ttl) => {
+const refuel = (t, z, x, y, ttl, s) => {
+  para++
+  if (para > PARAMAX) s.pause()
   fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/${z}/${x}/${y}.geojson`)
     .then(res => res.json())
     .then(json => {
@@ -36,14 +40,21 @@ const refuel = (t, z, x, y, ttl) => {
           .toString('base64')
       }))
       count++
+      para--
+      if (para < PARAMAX) s.resume()
       if (count % 10000 === 0) show(t, z, x, y)
     })
     .catch(err => {
       // console.error(err)
       ttl--
-      if (ttl == -1) return
+      if (ttl == -1) {
+        console.error(`GAVE UP ${t}/${z}/{x}/${y}`)
+        para--
+        if (para < PARAMAX) s.resume()
+        return
+      }
       console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${x}/${y}`)
-      refuel(t, z, x, y, ttl)
+      refuel(t, z, x, y, ttl, s)
     })
 }
 
@@ -55,6 +66,6 @@ fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/mokuroku.csv.gz`)
       if (zxy.length !== 3) return
       const [z, x, y] = zxy
       if (isNaN(z)) return
-      refuel(t, z, x, y, 20)
+      refuel(t, z, x, y, 20, s)
     })
   })
