@@ -13,7 +13,7 @@ const t = process.argv[2]
 const stratify = require(`./stratify/${t}.js`)
 let count = 0
 let para = 0
-const PARAMAX = 15
+const PARAMAX = 30
 
 const show = (t, z, x, y) => {
   console.error(`${moment().format()}\t#${count}(${para})\t${t}/${z}/${x}/${y}`)
@@ -41,8 +41,8 @@ const refuel = (t, z, x, y, ttl, s) => {
       }))
       count++
       para--
-      if (para < PARAMAX) s.resume()
-      if (count % 10000 === 0) show(t, z, x, y)
+      if (para <= PARAMAX / 2) s.resume()
+      if (count % 5000 === 0) show(t, z, x, y)
     })
     .catch(err => {
       // console.error(err)
@@ -50,7 +50,7 @@ const refuel = (t, z, x, y, ttl, s) => {
       if (ttl == -1) {
         console.error(`GAVE UP ${t}/${z}/{x}/${y}`)
         para--
-        if (para < PARAMAX) s.resume()
+        if (para <= PARAMAX / 2) s.resume()
         return
       }
       console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${x}/${y}`)
@@ -68,4 +68,6 @@ fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/mokuroku.csv.gz`)
       if (isNaN(z)) return
       refuel(t, z, x, y, 20, s)
     })
+    // s.on('pause', () => { process.stderr.write('p') })
+    // s.on('resume', () => { process.stderr.write('r') })
   })
