@@ -51,7 +51,7 @@ const refuel = (t, z, x, y, ttl, s) => {
       // console.error(err)
       ttl--
       if (ttl == -1) {
-        console.error(`GAVE UP ${t}/${z}/{x}/${y}`)
+        console.error(`GAVE UP ${t}/${z}/${x}/${y}`)
         para--
         if (para <= PARAMAX / 2) s.resume()
         return
