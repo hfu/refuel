@@ -56,7 +56,10 @@ const refuel = (t, z, x, y, ttl, s) => {
         if (para <= PARAMAX / 2) s.resume()
         return
       }
-      console.error(`#${count}: retrying ttl=${ttl} ${t}/${z}/${x}/${y}`)
+      console.error(
+        `#${count}: ${moment().format()} retrying ttl=${ttl} ` + 
+	`${t}/${z}/${x}/${y}`
+      )
       refuel(t, z, x, y, ttl, s)
     })
 }
