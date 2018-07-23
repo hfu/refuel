@@ -1,4 +1,5 @@
 *.mbtiles
+*.mbtiles-journal
 *.hst
 *.mokuroku
 e14

@@ -14,7 +14,8 @@ const t = process.argv[2]
 const stratify = require(`./stratify/${t}.js`)
 let count = 0
 let para = 0
-const PARAMAX = 10 // 60
+const PARAMAX = 100 // 60
+const TTL = 20
 
 const show = (t, z, x, y) => {
   console.error(`${moment().format()}\t#${count}(${para})\t${t}/${z}/${x}/${y}`)
@@ -55,17 +56,20 @@ const refuel = (t, z, x, y, ttl, s) => {
     .catch(err => {
       // console.error(err)
       ttl--
-      if (ttl == -1) {
+      if (ttl === -1) {
         console.error(`GAVE UP ${t}/${z}/${x}/${y}`)
-        para--
-        if (para <= PARAMAX / 2) s.resume()
-        return
+	s.resume() // we need to make sure we get forward.
+        //para--
+        //if (para <= PARAMAX / 2) s.resume()
+      } else {
+        console.error(
+          `#${count}: ${moment().format()} retrying ttl=${ttl} ` + 
+	  `${t}/${z}/${x}/${y}`
+        )
+	setTimeout(() => {
+          refuel(t, z, x, y, ttl, s)
+	}, 5000)
       }
-      console.error(
-        `#${count}: ${moment().format()} retrying ttl=${ttl} ` + 
-	`${t}/${z}/${x}/${y}`
-      )
-      refuel(t, z, x, y, ttl, s)
     })
 }
 
@@ -76,7 +80,7 @@ const work = (stream) => {
     if (zxy.length !== 3) return
     const [z, x, y] = zxy
     if (isNaN(z)) return
-    refuel(t, z, x, y, 20, s)
+    refuel(t, z, x, y, TTL, s)
   })
 }
 
