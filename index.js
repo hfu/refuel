@@ -30,7 +30,7 @@ const refuel = (t, z, x, y, ttl, s) => {
       reason => { 
         console.error('** json parse error') 
         console.error(reason) 
-	para--
+	      para--
       }
     )
     .then(
@@ -38,9 +38,9 @@ const refuel = (t, z, x, y, ttl, s) => {
         let o = stratify(json)
         for (let i in o) {
           o[i] = geojsonvt(
-	    o[i], 
-	    {maxZoom: 18, buffer: 64}
-	  ).getTile(z, x, y)
+	          o[i], 
+	          {maxZoom: 18, buffer: 64}
+	        ).getTile(z, x, y)
         }
         try {
           console.log(JSON.stringify({
@@ -52,7 +52,7 @@ const refuel = (t, z, x, y, ttl, s) => {
           }))
           count++
         } catch (e) {
-	  console.error('** geojsonvt error')
+	        console.error('** geojsonvt error')
           console.error(e)
         }
         para--
@@ -62,24 +62,23 @@ const refuel = (t, z, x, y, ttl, s) => {
       reason => {
         console.error('** network error')
         s.resume()
-	ttl--
-	para--
-	if (ttl === -1) {
-	  console.error(`GAVE UP ${t}/${z}/${x}/${y}`)
-	} else {
-          console.error(err)
+	      ttl--
+	      para--
+	      if (ttl === -1) {
+	        console.error(`GAVE UP ${t}/${z}/${x}/${y}`)
+	      } else {
+          console.error(reason)
           console.error(
             `#${count}: ${moment().format()} retrying ttl=${ttl} ` + 
-	    `${t}/${z}/${x}/${y}`
+	          `${t}/${z}/${x}/${y}`
           )
-	  setTimeout(() => {
+	        setTimeout(() => {
             refuel(t, z, x, y, ttl, s)
-	  }, 5000)
+	        }, 5000)
         }
       }
     )
   }
-
 
 const work = (stream) => {
   const s = byline(stream.pipe(zlib.createGunzip()))
@@ -100,17 +99,3 @@ if (process.argv.length === 3) {
 } else {
   work(fs.createReadStream(process.argv[3]))
 }
-
-/*
-    const s = byline(res.body.pipe(zlib.createGunzip()))
-    s.on('data', line => {
-      zxy = line.toString().split('/').map(v => parseInt(v))
-      if (zxy.length !== 3) return
-      const [z, x, y] = zxy
-      if (isNaN(z)) return
-      refuel(t, z, x, y, 20, s)
-    })
-    // s.on('pause', () => { process.stderr.write('p') })
-    // s.on('resume', () => { process.stderr.write('r') })
-  }
-  */
