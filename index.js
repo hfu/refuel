@@ -14,7 +14,7 @@ const t = process.argv[2]
 const stratify = require(`./stratify/${t}.js`)
 let count = 0
 let para = 0
-const PARAMAX = 100 // 60
+const PARAMAX = 300 // 60
 const TTL = 20
 
 const show = (t, z, x, y) => {
@@ -25,53 +25,61 @@ const refuel = (t, z, x, y, ttl, s) => {
   para++
   if (para > PARAMAX) s.pause()
   fetch(`https://maps.gsi.go.jp/xyz/experimental_${t}/${z}/${x}/${y}.geojson`)
-    .then(res => res.json())
-    .then(json => {
-      // console.log(JSON.stringify(json))
-      let o = stratify(json)
-      // console.log(JSON.stringify(o))
-      for (let i in o) {
-        o[i] = geojsonvt(
-	  o[i], 
-	  {maxZoom: 18, buffer: 64}
-	).getTile(z, x, y)
+    .then(
+      res => res.json(), 
+      reason => { 
+        console.error('** json parse error') 
+        console.error(reason) 
+	para--
       }
-      // if (!o[t]) return
-      try {
-        console.log(JSON.stringify({
-          z: z,
-          x: x,
-          y: y,
-          buffer: zlib.gzipSync(vtpbf.fromGeojsonVt(o, {version: 2}))
-            .toString('base64')
-        }))
-        count++
-      } catch (e) {
-        console.error(e)
+    )
+    .then(
+      json => {
+        let o = stratify(json)
+        for (let i in o) {
+          o[i] = geojsonvt(
+	    o[i], 
+	    {maxZoom: 18, buffer: 64}
+	  ).getTile(z, x, y)
+        }
+        try {
+          console.log(JSON.stringify({
+            z: z,
+            x: x,
+            y: y,
+            buffer: zlib.gzipSync(vtpbf.fromGeojsonVt(o, {version: 2}))
+              .toString('base64')
+          }))
+          count++
+        } catch (e) {
+	  console.error('** geojsonvt error')
+          console.error(e)
+        }
+        para--
+        if (para <= PARAMAX / 2) s.resume()
+        if (count % 5000 === 0) show(t, z, x, y)
+      },
+      reason => {
+        console.error('** network error')
+        s.resume()
+	ttl--
+	para--
+	if (ttl === -1) {
+	  console.error(`GAVE UP ${t}/${z}/${x}/${y}`)
+	} else {
+          console.error(err)
+          console.error(
+            `#${count}: ${moment().format()} retrying ttl=${ttl} ` + 
+	    `${t}/${z}/${x}/${y}`
+          )
+	  setTimeout(() => {
+            refuel(t, z, x, y, ttl, s)
+	  }, 5000)
+        }
       }
-      para--
-      if (para <= PARAMAX / 2) s.resume()
-      if (count % 5000 === 0) show(t, z, x, y)
-    })
-    .catch(err => {
-      // console.error(err)
-      ttl--
-      if (ttl === -1) {
-        console.error(`GAVE UP ${t}/${z}/${x}/${y}`)
-	s.resume() // we need to make sure we get forward.
-        //para--
-        //if (para <= PARAMAX / 2) s.resume()
-      } else {
-        console.error(
-          `#${count}: ${moment().format()} retrying ttl=${ttl} ` + 
-	  `${t}/${z}/${x}/${y}`
-        )
-	setTimeout(() => {
-          refuel(t, z, x, y, ttl, s)
-	}, 5000)
-      }
-    })
-}
+    )
+  }
+
 
 const work = (stream) => {
   const s = byline(stream.pipe(zlib.createGunzip()))
