@@ -47,3 +47,6 @@ index.js and hst2mbtiles can be piped, or the stored and the redirected.
 - [stratify-spec](https://github.com/hfu/stratify-spec) is the specification to write a configuration for assigning a vector tile layer to a GeoJSON feature. This is necessary and data-dependent configuration when converting GeoJSON to vector tile.
 - [mokuroku-stream](https://github.com/hfu/mokuroku-stream) is the basic code to get tile numbers from a mokuroku.csv.gz.
 - [hst2mbtiles](https://github.com/hfu/hst2mbtiles) is a tool to convert [headless serialtiles](https://github.com/hfu/headless-serialtiles-spec) to mbtiles.
+- [kirigami](https://github.com/hfu/kirigami) is a tool to cut mokuroku into modules.
+hst2mbtiles.js is a script to create mbtiles from hst file. This is a product of a separate project called [hst2mbtiles](https://github.com/hfu/hst2mbtiles). 
+hst2mbtiles.js is a script to create mbtiles from hst file. This is a product of a separate project called [hst2mbtiles](https://github.com/hfu/hst2mbtiles).
